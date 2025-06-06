@@ -1,10 +1,10 @@
 import Foundation
 
 struct Movie: Codable {
-    let title: String?
-    let originalTitle: String?
-    let originalTitleRomanised: String?
-    let releaseDate: String?
+    let title: String
+    let originalTitle: String
+    let originalTitleRomanised: String
+    let releaseDate: String
     let description: String
     let image: String
     
@@ -17,3 +17,5 @@ struct Movie: Codable {
         case image
     }
 }
+
+//BabbleBuddy morning and afternoon

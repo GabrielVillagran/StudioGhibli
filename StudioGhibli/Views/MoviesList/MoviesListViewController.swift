@@ -73,7 +73,7 @@ extension MoviesListViewController: UITableViewDataSource, UITableViewDelegate {
         //Configuramos el contenido de las celdas
         var cellInfo = cell.defaultContentConfiguration()
         cellInfo.text = movie.title
-        cellInfo.secondaryText = movie.releaseDate
+        cellInfo.secondaryText = movie.originalTitle
         cell.contentConfiguration = cellInfo
         return cell
     }

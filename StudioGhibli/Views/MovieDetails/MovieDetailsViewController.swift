@@ -1,5 +1,6 @@
 import Foundation
 import UIKit
+import SwiftUI
 
 class MovieDetailsViewController: UIViewController {
     
@@ -9,7 +10,8 @@ class MovieDetailsViewController: UIViewController {
     private let originalTitleLabel = UILabel()
     private let releaseDateLabel = UILabel()
     private let descriptionLabel = UILabel()
-    
+    private let swiftUIButton = UIButton(type: .system)
+
     init(movie: Movie) {
         self.movie = movie
         super.init(nibName: nil, bundle: nil)
@@ -18,46 +20,52 @@ class MovieDetailsViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        titleLabel.text = movie.title
+        title = movie.title
         
         addElements()
         setupUI()
         showInformation()
     }
-    
+
     private func addElements() {
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(imageView)
         imageView.contentMode = .scaleAspectFit
+        view.addSubview(imageView)
 
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(titleLabel)
         titleLabel.font = .systemFont(ofSize: 20, weight: .bold)
+        view.addSubview(titleLabel)
 
         originalTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(originalTitleLabel)
         originalTitleLabel.font = .systemFont(ofSize: 17, weight: .regular)
+        view.addSubview(originalTitleLabel)
 
         releaseDateLabel.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(releaseDateLabel)
         releaseDateLabel.font = .systemFont(ofSize: 17, weight: .regular)
+        view.addSubview(releaseDateLabel)
 
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(descriptionLabel)
         descriptionLabel.numberOfLines = 0
+        view.addSubview(descriptionLabel)
 
+        // Configuración del botón que navegará a SwiftUI
+        swiftUIButton.translatesAutoresizingMaskIntoConstraints = false
+        swiftUIButton.setTitle("Ir a Vista SwiftUI", for: .normal)
+        swiftUIButton.addTarget(self, action: #selector(navigateToSwiftUI), for: .touchUpInside)
+        view.addSubview(swiftUIButton)
     }
+
     private func setupUI() {
         NSLayoutConstraint.activate([
             imageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             imageView.heightAnchor.constraint(equalToConstant: 220),
             imageView.widthAnchor.constraint(equalToConstant: 160),
-            
+
             titleLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 20),
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
@@ -72,21 +80,24 @@ class MovieDetailsViewController: UIViewController {
 
             descriptionLabel.topAnchor.constraint(equalTo: releaseDateLabel.bottomAnchor, constant: 20),
             descriptionLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-            descriptionLabel.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor)
+            descriptionLabel.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
+
+            swiftUIButton.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 30),
+            swiftUIButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
-    
+
     private func showInformation() {
         titleLabel.text = movie.title
-        originalTitleLabel.text = "Original Title: \(movie.originalTitleRomanised ?? "-")"
-        releaseDateLabel.text = "Release Date: \(movie.releaseDate ?? "-")"
+        originalTitleLabel.text = "Original Title: \(movie.originalTitleRomanised)"
+        releaseDateLabel.text = "Release Date: \(movie.releaseDate)"
         descriptionLabel.text = movie.description
 
         if let url = URL(string: movie.image) {
             downloadImage(from: url)
         }
     }
-    
+
     private func downloadImage(from url: URL) {
         URLSession.shared.dataTask(with: url) { data, _, _ in
             if let data = data, let image = UIImage(data: data) {
@@ -95,5 +106,12 @@ class MovieDetailsViewController: UIViewController {
                 }
             }
         }.resume()
+    }
+
+    @objc private func navigateToSwiftUI() {
+        // Aquí se navega a una vista SwiftUI dentro del stack de navegación UIKit
+        let swiftUIView = SwiftUIView()
+        let hostingController = UIHostingController(rootView: swiftUIView)
+        navigationController?.pushViewController(hostingController, animated: true)
     }
 }
